@@ -1,7 +1,11 @@
 import socket
 from IPy import IP
 
-print('Welcome to portscanner!')
+def scan(target):
+    converted_ip = check_ip(target)
+    print('\n' + '[-_0 Scanning Target] ' + str(target))
+    for port in range(70,100):
+        scan_port(converted_ip, port)
 
 def check_ip(ip):
     try:
@@ -14,23 +18,23 @@ def get_banner(s):
     return s.recv(1024)
 
 def scan_port(ipaddress, port):
-	try:
-		sock  = socket.socket()
-		sock.settimeout(2)
-		sock.connect((ipaddress, port))
-		try:
-		    banner = get_banner(sock)
-		    print('Port ' + str(port) + ' is Open' + ': Banner :' + str(banner.decode().strip('\n')))
-		except:    
-		    print('Port ' + str(port) + ' is Open')
-	except:
-		pass
-		
-ipaddress = input('Input IP address or in form of domain name, to preform scan: ')
-start_port = int(input('Choose start of ports to scan: '))
-end_port = int(input('Choose end number of ports to scan: '))
+    try:
+        sock = socket.socket()
+        sock.settimeout(0.5)
+        sock.connect((ipaddress, port))
+        try:
+            banner = get_banner(sock)
+            print('[+] Open Port ' + str(port) + ' : ' + str(banner.decode().strip('\n')))
+        except:
+            print('[+] Open Port ' + str(port))
+    except:
+        pass
 
-converted_ip = check_ip(ipaddress)
 
-for port in range(start_port, end_port):
-    scan_port(converted_ip, port)
+if __name__ == "__main__":
+    targets = input('[+] Enter Target/s To Scan(split multiple targets with ,): ')
+    if ',' in targets:
+        for ip_add in targets.split(','):
+            scan(ip_add.strip(' '))
+    else:
+        scan(targets)
